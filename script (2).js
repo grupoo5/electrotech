@@ -1,23 +1,11 @@
 (() => {
   "use strict";
 
-  /* ===== Ilustrações geradas em SVG (funcionam sem Internet) ===== */
-  const DESENHOS = {
-    "Portáteis": '<rect x="90" y="70" width="220" height="140" rx="10" fill="#333333"/><rect x="100" y="80" width="200" height="120" fill="#218088"/><path d="M60 215h280l-15 22H75z" fill="#333333"/>',
-    "Computadores de secretária": '<rect x="70" y="70" width="180" height="120" rx="8" fill="#333333"/><rect x="80" y="80" width="160" height="100" fill="#218088"/><path d="M145 190h30l10 40h-50z" fill="#333333"/><rect x="275" y="80" width="65" height="150" rx="8" fill="#333333"/><circle cx="307" cy="105" r="8" fill="#218088"/>',
-    "Monitores": '<rect x="60" y="55" width="280" height="160" rx="10" fill="#333333"/><rect x="70" y="65" width="260" height="140" fill="#218088"/><path d="M185 215h30v25h45v10H140v-10h45z" fill="#333333"/>',
-    "Smartphones": '<rect x="140" y="35" width="120" height="230" rx="22" fill="#333333"/><rect x="150" y="55" width="100" height="185" rx="6" fill="#218088"/><circle cx="200" cy="45" r="4" fill="#D9DEDF"/>',
-    "Auscultadores": '<path d="M110 170v-30a90 90 0 01180 0v30" fill="none" stroke="#333333" stroke-width="18"/><rect x="85" y="150" width="50" height="85" rx="22" fill="#218088"/><rect x="265" y="150" width="50" height="85" rx="22" fill="#218088"/>',
-    "Teclados": '<rect x="45" y="95" width="310" height="120" rx="14" fill="#333333"/><path d="M65 120h270M65 150h270" stroke="#D9DEDF" stroke-width="18" stroke-dasharray="20 8"/><path d="M120 185h160" stroke="#218088" stroke-width="18"/>',
-    "Ratos": '<rect x="145" y="60" width="110" height="180" rx="55" fill="#333333"/><path d="M200 65v75M150 140h100" stroke="#D9DEDF" stroke-width="4"/><rect x="191" y="85" width="18" height="35" rx="9" fill="#218088"/>',
-    "Carregadores": '<rect x="130" y="100" width="140" height="140" rx="22" fill="#333333"/><path d="M170 100V60M230 100V60" stroke="#333333" stroke-width="16"/><path d="M210 125l-35 55h25l-10 40 38-58h-26z" fill="#218088"/>',
-    "Cabos": '<path d="M90 90c150-30 10 130 120 130s0-130 100-100" fill="none" stroke="#333333" stroke-width="14"/><rect x="55" y="75" width="48" height="34" rx="7" fill="#218088"/><rect x="298" y="105" width="48" height="34" rx="7" fill="#218088"/>',
-    "Colunas Bluetooth": '<rect x="80" y="90" width="240" height="130" rx="40" fill="#333333"/><circle cx="145" cy="155" r="40" fill="#218088"/><circle cx="255" cy="155" r="40" fill="#218088"/><circle cx="145" cy="155" r="14" fill="#D9DEDF"/><circle cx="255" cy="155" r="14" fill="#D9DEDF"/>'
-  };
-  const criarImagem = (tipo) => "data:image/svg+xml," + encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300"><rect width="400" height="300" fill="#F3F4F5"/>${DESENHOS[tipo]}</svg>`);
+  // Caminho da ilustração de cada tipo de produto (pasta "imagens").
+  const criarImagem = (tipo) => "imagens/" + tipo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".svg";
 
   /* ===== Catálogo (dados fictícios). Preços em kwanzas. =====
+     Os cartões estão escritos no HTML: ao alterar um produto, actualize os dois sítios.
      [id, nome, categoria, tipo, preço, preço promocional, stock, descrição, destaque] */
   const PRODUTOS = [
     [1, "Portátil Aurora 14", "Computadores", "Portáteis", 485000, 439000, 8, "Portátil de 14 polegadas, 16 GB de RAM e SSD de 512 GB. Leve e indicado para estudo e trabalho.", true],
@@ -97,7 +85,7 @@
     setTimeout(() => aviso.remove(), 3000);
   }
 
-  /* ===== Renderização dos produtos ===== */
+  /* ===== Preço e stock (janela de detalhes) ===== */
   function blocoPreco(p) {
     const anterior = p.promocao ? `<s class="preco-anterior"><span class="oculto-visualmente">Preço anterior: </span>${formatarPreco(p.preco)}</s>` : "";
     return `<p class="bloco-preco"><span class="preco-produto">${formatarPreco(precoActual(p))}</span>${anterior}</p>`;
@@ -105,22 +93,6 @@
   const textoStock = (p) => p.stock > 0
     ? `<p class="estado-stock">Em stock: ${p.stock} unidades</p>`
     : '<p class="estado-stock sem-stock">Esgotado</p>';
-
-  const criarCartao = (p) => `
-    <article class="cartao-produto">
-      <img class="imagem-produto" src="${p.imagem}" alt="Ilustração de ${p.nome}" loading="lazy" width="400" height="300">
-      ${p.promocao ? `<span class="etiqueta-promocao">Promoção -${Math.round((1 - p.promocao / p.preco) * 100)}%</span>` : ""}
-      <div class="informacao-produto">
-        <p class="categoria-produto">${p.categoria} · ${p.tipo}</p>
-        <h3 class="nome-produto">${p.nome}</h3>
-        ${blocoPreco(p)}
-        ${textoStock(p)}
-        <div class="accoes-produto">
-          <button type="button" class="botao botao-contorno" data-detalhes="${p.id}" aria-label="Ver detalhes de ${p.nome}">Ver detalhes</button>
-          <button type="button" class="botao botao-principal botao-adicionar" data-adicionar="${p.id}" ${p.stock ? `aria-label="Adicionar ao carrinho: ${p.nome}"` : "disabled"}>${p.stock ? "Adicionar ao carrinho" : "Esgotado"}</button>
-        </div>
-      </div>
-    </article>`;
 
   /* ===== Pesquisa e filtros combinados ===== */
   function filtrarProdutos() {
@@ -131,13 +103,18 @@
     const intervaloInvalido = minimo > maximo;
     elementos.erro.hidden = !intervaloInvalido;
 
-    const resultados = intervaloInvalido ? [] : PRODUTOS.filter((p) =>
+    const corresponde = (p) => !intervaloInvalido &&
       normalizar(p.nome).includes(termo) &&
       (!categoriaPagina || p.categoria === categoriaPagina) &&
       (tipoFiltro === "todas" || (tipoFiltro === "cat" ? p.categoria : p.tipo) === valorFiltro) &&
-      precoActual(p) >= minimo && precoActual(p) <= maximo);
+      precoActual(p) >= minimo && precoActual(p) <= maximo;
 
-    elementos.catalogo.innerHTML = resultados.map(criarCartao).join("");
+    // Mostra ou esconde cada <article> escrito no HTML.
+    const resultados = [...elementos.catalogo.querySelectorAll(".cartao-produto")].filter((cartao) => {
+      cartao.hidden = !corresponde(obterProduto(cartao.dataset.id));
+      return !cartao.hidden;
+    });
+
     elementos.semResultados.hidden = resultados.length > 0 || intervaloInvalido;
     elementos.contagem.textContent = resultados.length === 1 ? "1 produto encontrado" : `${resultados.length} produtos encontrados`;
   }
@@ -148,14 +125,7 @@
     filtrarProdutos();
   }
 
-  // Preenche a lista de categorias; nas páginas de categoria mostra só os seus tipos.
   function prepararCatalogo() {
-    const nomes = categoriaPagina ? [categoriaPagina] : Object.keys(CATEGORIAS);
-    const todas = categoriaPagina ? "" : '<option value="todas">Todas as categorias</option>';
-    elementos.categoria.innerHTML = todas + nomes.map((categoria) => {
-      const tipos = [...new Set(PRODUTOS.filter((p) => p.categoria === categoria).map((p) => p.tipo))];
-      return `<optgroup label="${categoria}"><option value="cat:${categoria}">${categoria} (todos)</option>${tipos.map((t) => `<option value="tipo:${t}">${t}</option>`).join("")}</optgroup>`;
-    }).join("");
     // Recebe a pesquisa feita noutra página (?pesquisa=...).
     const termo = new URLSearchParams(location.search).get("pesquisa") || "";
     limparFiltros();
@@ -180,16 +150,6 @@
       evento.preventDefault();
       limparFiltros();
     });
-  }
-
-  function prepararInicio() {
-    $("#imagem-principal").src = criarImagem("Portáteis");
-    const paginas = { "Computadores": "computadores.html", "Telemóveis": "telemoveis.html", "Acessórios": "acessorios.html" };
-    $("#lista-categorias").innerHTML = Object.entries(CATEGORIAS).map(([categoria, desenho]) =>
-      `<a class="cartao-categoria" href="${paginas[categoria]}">
-        <img class="imagem-categoria" src="${criarImagem(desenho)}" alt=""><span>${categoria}</span>
-      </a>`).join("");
-    $("#lista-destaques").innerHTML = PRODUTOS.filter((p) => p.destaque).map(criarCartao).join("");
   }
 
   /* ===== Detalhes do produto ===== */
@@ -377,9 +337,8 @@
   /* ===== Arranque ===== */
   function iniciar() {
     $("#ano-actual").textContent = new Date().getFullYear();
-    // Cada página só prepara o conteúdo que possui.
+    // Só as páginas com catálogo precisam de preparar os filtros.
     if (elementos.catalogo) prepararCatalogo();
-    else prepararInicio();
     desenharCarrinho();
     ligarEventos();
   }
