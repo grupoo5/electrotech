@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Planalto Tech: computadores, telemóveis e acessórios. Loja de demonstração.">
+  <title>Catálogo | Planalto Tech</title>
+  <link rel="stylesheet" href="estilos.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- Ícones reutilizáveis -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="oculto-visualmente" aria-hidden="true">
+    <symbol id="icone-logotipo" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#218088"/><path d="M5 23l8-11 5 6 3-4 6 9z" fill="#FFFFFF"/></symbol>
+    <symbol id="icone-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="icone-pesquisa" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="icone-carrinho" viewBox="0 0 24 24"><path d="M3 4h2l2.5 11h10L20 8H6.2"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></symbol>
+    <symbol id="icone-fechar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="icone-utilizador" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></symbol>
+  </svg>
+
+  <a class="ligacao-saltar" href="#conteudo-principal">Saltar para o conteúdo</a>
+
+  <header class="cabecalho">
+    <div class="contentor cabecalho-conteudo">
+      <button type="button" id="botao-menu" class="botao-icone botao-menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-navegacao">
+        <svg class="icone" aria-hidden="true"><use href="#icone-menu"/></svg>
+      </button>
+
+      <a class="logotipo" href="index.html">
+        <svg class="imagem-logotipo" aria-hidden="true"><use href="#icone-logotipo"/></svg>
+        <span class="nome-loja">Planalto Tech</span>
+      </a>
+
+      <nav id="menu-navegacao" class="menu-navegacao" aria-label="Navegação principal">
+        <a class="ligacao-menu" href="index.html">Início</a>
+        <a class="ligacao-menu" href="catalogo.html" aria-current="page">Catálogo</a>
+        <a class="ligacao-menu" href="computadores.html">Computadores</a>
+        <a class="ligacao-menu" href="telemoveis.html">Telemóveis</a>
+        <a class="ligacao-menu" href="acessorios.html">Acessórios</a>
+      </nav>
+
+      <form id="formulario-pesquisa" class="formulario-pesquisa" role="search" action="catalogo.html">
+        <label class="oculto-visualmente" for="campo-pesquisa">Pesquisar produtos pelo nome</label>
+        <input type="search" id="campo-pesquisa" name="pesquisa" class="campo-pesquisa" placeholder="Pesquisar produtos..." autocomplete="off">
+        <button type="submit" class="botao-pesquisa" aria-label="Pesquisar">
+          <svg class="icone" aria-hidden="true"><use href="#icone-pesquisa"/></svg>
+        </button>
+      </form>
+
+      <button type="button" id="botao-utilizador" class="botao-icone botao-utilizador" aria-haspopup="dialog" aria-label="Perfil do utilizador">
+        <svg class="icone" aria-hidden="true"><use href="#icone-utilizador"/></svg>
+      </button>
+
+      <button type="button" id="botao-carrinho" class="botao-icone botao-carrinho" aria-haspopup="dialog">
+        <svg class="icone" aria-hidden="true"><use href="#icone-carrinho"/></svg>
+        <span class="oculto-visualmente">Abrir carrinho, artigos:</span>
+        <span id="contador-carrinho" class="contador-carrinho">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="conteudo-principal">
+    <noscript><p class="contentor aviso-sem-javascript">Active o JavaScript para ver os produtos.</p></noscript>
+
+    <section id="catalogo" class="contentor secao secao-catalogo" aria-labelledby="titulo-catalogo">
+      <h1 id="titulo-catalogo" class="titulo-secao">Catálogo</h1>
+
+      <form id="formulario-filtros" class="formulario-filtros" novalidate>
+        <div class="grupo-filtro">
+          <label for="filtro-categoria">Categoria</label>
+          <select id="filtro-categoria" class="campo-filtro"></select>
+        </div>
+        <div class="grupo-filtro">
+          <label for="filtro-preco-minimo">Preço mínimo (Kz)</label>
+          <input type="number" id="filtro-preco-minimo" class="campo-filtro" min="0" step="1000" inputmode="numeric" placeholder="0">
+        </div>
+        <div class="grupo-filtro">
+          <label for="filtro-preco-maximo">Preço máximo (Kz)</label>
+          <input type="number" id="filtro-preco-maximo" class="campo-filtro" min="0" step="1000" inputmode="numeric" placeholder="Sem limite">
+        </div>
+        <button type="reset" class="botao botao-contorno">Limpar filtros</button>
+      </form>
+
+      <p id="erro-filtros" class="erro-filtros" role="alert" hidden>O preço mínimo não pode ser superior ao preço máximo.</p>
+      <p id="contagem-resultados" class="contagem-resultados" aria-live="polite"></p>
+      <div id="lista-produtos" class="lista-produtos lista-catalogo"></div>
+      <p id="mensagem-sem-resultados" class="mensagem-vazia" hidden>Nenhum produto encontrado. Experimente outro nome ou limpe os filtros. <a href="catalogo.html" id="ligacao-todo-catalogo" hidden>Procurar em todo o catálogo</a></p>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="contentor grelha-rodape">
+      <div>
+        <p class="logotipo logotipo-rodape">
+          <svg class="imagem-logotipo" aria-hidden="true"><use href="#icone-logotipo"/></svg>
+          <span class="nome-loja">Planalto Tech</span>
+        </p>
+        <p>Loja de demonstração de dispositivos electrónicos.</p>
+      </div>
+      <nav aria-label="Navegação do rodapé">
+        <h2 class="titulo-rodape">Navegação</h2>
+        <ul class="lista-rodape">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="computadores.html">Computadores</a></li>
+          <li><a href="telemoveis.html">Telemóveis</a></li>
+          <li><a href="acessorios.html">Acessórios</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="titulo-rodape">Contactos (fictícios)</h2>
+        <address class="contactos-rodape">
+          Rua de Exemplo, 123, Huambo<br>
+          Telefone: +244 900 000 000<br>
+          Correio: loja@exemplo.com
+        </address>
+      </div>
+      <div>
+        <h2 class="titulo-rodape">Redes sociais</h2>
+        <div class="redes-sociais">
+          <button type="button" class="botao-rede" data-rede="Facebook">Facebook</button>
+          <button type="button" class="botao-rede" data-rede="Instagram">Instagram</button>
+          <button type="button" class="botao-rede" data-rede="WhatsApp">WhatsApp</button>
+        </div>
+        <h2 class="titulo-rodape">Pagamentos</h2>
+        <p>Multicaixa Express, transferência bancária e pagamento na entrega (informação demonstrativa).</p>
+      </div>
+    </div>
+    <p class="direitos-reservados">© <span id="ano-actual">2026</span> Planalto Tech. Todos os direitos reservados.</p>
+  </footer>
+
+  <dialog id="janela-detalhes" class="janela-detalhes" aria-labelledby="titulo-detalhes">
+    <button type="button" class="botao-icone botao-fechar" data-fechar aria-label="Fechar detalhes">
+      <svg class="icone" aria-hidden="true"><use href="#icone-fechar"/></svg>
+    </button>
+    <div id="conteudo-detalhes" class="conteudo-detalhes"></div>
+  </dialog>
+
+  <dialog id="carrinho-compras" class="carrinho-compras" aria-labelledby="titulo-carrinho">
+    <div class="estrutura-carrinho">
+      <div class="topo-carrinho">
+        <h2 id="titulo-carrinho">O seu carrinho</h2>
+        <button type="button" class="botao-icone" data-fechar aria-label="Fechar carrinho">
+          <svg class="icone" aria-hidden="true"><use href="#icone-fechar"/></svg>
+        </button>
+      </div>
+      <div class="corpo-carrinho">
+        <p id="carrinho-vazio" class="mensagem-vazia">O seu carrinho está vazio. Adicione produtos do catálogo.</p>
+        <ul id="lista-carrinho" class="lista-carrinho"></ul>
+      </div>
+      <div id="resumo-carrinho" class="resumo-carrinho">
+        <p class="linha-resumo"><span>Subtotal geral</span><span id="subtotal-geral"></span></p>
+        <p class="linha-resumo linha-total"><span>Total da compra</span><strong id="total-compra"></strong></p>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="janela-utilizador" class="janela-utilizador" aria-labelledby="titulo-utilizador">
+    <button type="button" class="botao-icone botao-fechar" data-fechar aria-label="Fechar perfil">
+      <svg class="icone" aria-hidden="true"><use href="#icone-fechar"/></svg>
+    </button>
+    <form id="formulario-utilizador" class="formulario-utilizador">
+      <h2 id="titulo-utilizador">O seu perfil</h2>
+      <p id="saudacao-utilizador"></p>
+      <label for="campo-nome-utilizador">Nome (guardado apenas neste navegador)</label>
+      <input type="text" id="campo-nome-utilizador" class="campo-filtro" maxlength="40" autocomplete="given-name">
+      <button type="submit" class="botao botao-principal">Guardar nome</button>
+    </form>
+  </dialog>
+
+  <div id="area-notificacoes" class="area-notificacoes" role="status" aria-live="polite"></div>
+</body>
+</html>
